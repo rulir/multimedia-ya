@@ -34,8 +34,10 @@ class Player {
 	};
 
 	_onVideoStartToPlay(e) {
-		this.videoWidth = this.playerEl.videoWidth;
-		this.videoHeight = this.playerEl.videoHeight;
+		this.videoWidth = this.playerEl.clientWidth;
+		this.videoHeight = this.playerEl.clientHeight;
+		this.canvas.canvasEl.width = this.videoWidth;
+		this.canvas.canvasEl.height = this.videoHeight;
 		this.watchTheVideo();
 	};
 
@@ -67,25 +69,6 @@ class Player {
 		};
 
 		this.canvas.context.putImageData(frame, 0, 0);
-
-
-		// let data = frameData.data;
-		// let iLen = frameData.width;
-		// let jLen = frameData.height;
-		// let index; 
-		// let average;
-
-		// for (let i = 0; i < iLen; i++) {
-		// 	for (let j = 0; j < jLen; j++) {
-		// 		index = (i * 4) * jLen + (j * 4);
-		// 		average = (data[index] + data[index + 1] + data[index + 2]) / 3;
-		// 		data[index] = average;
-		// 		data[index + 1] = average;
-		// 		data[index + 2] = average;
-		// 	};
-		// };
-
-		// this.canvas.context.putImageData(frameData, 0, 0);
 	};
 };
 
