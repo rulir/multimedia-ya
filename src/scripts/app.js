@@ -35,7 +35,7 @@ class Player {
 		this.videoSourceEl.setAttribute('src', this.videoUrl);
 		this.playerEl.appendChild(this.videoSourceEl);
 		this.playerEl.addEventListener('play', this._onVideoStartToPlay.bind(this));
-		this.playerEl.addEventListener('seeking', this._onVideoSeeking.bind(this));
+		// this.playerEl.addEventListener('seeking', this._onVideoSeeking.bind(this));
 	};
 
 	_onVideoStartToPlay(e) {
@@ -47,9 +47,9 @@ class Player {
 		this.watchTheVideo();
 	};
 
-	_onVideoSeeking(e) {
-		filterParsedSubs();
-	};
+	// _onVideoSeeking(e) {
+	// 	filterParsedSubs();
+	// };
 
 	checkSubsAvailability(e) {
 		if (!this.subs.ready) {
@@ -77,34 +77,31 @@ class Player {
 		return filteredSubs;
 	};
 
-	filterParsedSubs() {
-		if (to) {
-			clearTimeout(to);
-		};
-		let to = setTimeout(() => {
-			this.subs.parsedSubs = this.getNeededSubsForThisTime();
-		}, 10);
+	// filterParsedSubs() {
+	// 	if (to) {
+	// 		clearTimeout(to);
+	// 	};
+	// 	let to = setTimeout(() => {
+	// 		this.subs.parsedSubs = this.getNeededSubsForThisTime();
+	// 	}, 10);
 
-	};
+	// };
 
 	startTimeСountup() {
-		
-		let marginToStartOfSubs = this.subs.parsedSubs[this.subsCurrСue].endTime - parseInt(this.playerEl.currentTime);
-		let nearestPauseDuration = this.subs.parsedSubs[this.subsCurrСue].endTime - this.subs.parsedSubs[this.subsCurrСue].startTime;
-
-		console.log(marginToStartOfSubs, nearestPauseDuration);
+		let delayToStartOfSubs = this.subs.parsedSubs[this.subsCurrСue].endTime - (parseInt(this.playerEl.currentTime) * 1000);
+		let pauseDuration = this.subs.parsedSubs[this.subsCurrСue].endTime - this.subs.parsedSubs[this.subsCurrСue].startTime;
 
 		let t1 = setTimeout(() => {
 			this.playerEl.pause();
 			clearTimeout(t1);
 			let t2 = setTimeout(() => {
 				this.playerEl.play();
-				this.subsCurrСue++;
-				marginToStartOfSubs = this.subs.parsedSubs[this.subsCurrСue].endTime - parseInt(this.playerEl.currentTime);
-				nearestPauseDuration = this.subs.parsedSubs[this.subsCurrСue].endTime - this.subs.parsedSubs[this.subsCurrСue].startTime;
+				if (this.subsCurrСue < this.subs.parsedSubs.lenght) {
+					this.subsCurrСue++;
+				};
 				clearTimeout(t2);
-			}, nearestPauseDuration);
-		}, marginToStartOfSubs);
+			}, pauseDuration);
+		}, delayToStartOfSubs);
 	};
 
 	watchTheVideo() {
