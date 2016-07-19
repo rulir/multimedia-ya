@@ -14,6 +14,8 @@ import data from 'gulp-data';
 import stylus from 'gulp-stylus';
 import rimraf from 'rimraf';
 import babel from 'gulp-babel';
+import plumber from 'gulp-plumber';
+import plumberErrorHandler from 'gulp-plumber-error-handler';
 
 
 const routes = {
@@ -42,7 +44,6 @@ const serverConfig = {
 	server: {
 		baseDir: './build'
 	},
-	tunnel: true,
 	host: 'localhost',
 	port: '8080',
 	logPrefix: 'multimedia-ya'
@@ -50,8 +51,15 @@ const serverConfig = {
 
 const reload = browserSync.reload;
 
+function errorHandler(task) {
+	return {
+		errorHandler: plumberErrorHandler(`Error in ${task} task`),
+	};
+}
+
 gulp.task('html', function() {
 	gulp.src(routes.src.html)
+		.pipe(plumber(errorHandler('html')))
 		.pipe(htmlreplace({
 			'css': 'css/bundle.css',
 			'js': 'js/bundle.js'
@@ -64,6 +72,7 @@ gulp.task('html', function() {
 
 gulp.task('script', function() {
 	gulp.src(routes.src.js)
+		.pipe(plumber(errorHandler('scripts')))
 		.pipe(sourcemaps.init())
 		.pipe(babel({
 			presets: ['es2015']
@@ -79,6 +88,7 @@ gulp.task('script', function() {
 
 gulp.task('style', function() {
 	gulp.src(routes.src.css)
+		.pipe(plumber(errorHandler('style')))
 		.pipe(sourcemaps.init())
 		.pipe(stylus())
 		.pipe(autoprefixer())
@@ -93,6 +103,7 @@ gulp.task('style', function() {
 
 gulp.task('assets', function() {
 	gulp.src(routes.src.assets)
+		.pipe(plumber(errorHandler('assets')))
 		.pipe(gulp.dest(routes.build.assets))
 		.pipe(reload({
 			stream: true

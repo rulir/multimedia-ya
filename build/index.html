@@ -15,9 +15,9 @@
 			</header>
 
 			<form action="" class="source-links-form">
-				<input class="source-links-form__input" id="videoUrl" type="text" placeholder="Ссылка на видео" required>
-				<input class="source-links-form__input" id="subUrl" type="text" placeholder="Ссылка на субтитры" required>
-				<input class="source-links-form__input" id="audioUrl" type="text" placeholder="Ссылка на саундтрек" required>
+				<input class="source-links-form__input" id="videoUrl" type="text" placeholder="Ссылка на видео" required value="./assets/video/kinopoisk.ru-Sherlock-284167.mp4">
+				<input class="source-links-form__input" id="subUrl" type="text" placeholder="Ссылка на субтитры" required value="./assets/subs/subs.srt">
+				<input class="source-links-form__input" id="audioUrl" type="text" placeholder="Ссылка на саундтрек" required value="f">
 				<input class="source-links-form__submit" type="submit" value="Заглушить">
 			</form>
 			
@@ -31,5 +31,6 @@
 	</main>
 
 	<script type="text/javascript" src="./js/bundle.js"></script>
+	<script type="text/javascript" src="./assets/lib/subtitles.parser.min.js"></script>
 </body>
 </html>
