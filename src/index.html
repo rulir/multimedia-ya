@@ -17,16 +17,22 @@
 			<form action="" class="source-links-form">
 				<input class="source-links-form__input" id="videoUrl" type="text" placeholder="Ссылка на видео" required value="./assets/video/kinopoisk.ru-Sherlock-284167.mp4">
 				<input class="source-links-form__input" id="subUrl" type="text" placeholder="Ссылка на субтитры" required value="./assets/subs/subs.srt">
-				<input class="source-links-form__input" id="audioUrl" type="text" placeholder="Ссылка на саундтрек" required value="f">
+				<input class="source-links-form__input" id="audioUrl" type="text" placeholder="Ссылка на саундтрек" required value="./assets/audio/Maple_Leaf_RagQ.ogg">
 				<input class="source-links-form__submit" type="submit" value="Заглушить">
 			</form>
 			
 		</div>
 		<div class="video-page video-page_hidden">
-			<video class="video" controls="true">
+			<video class="video-custom" controls="true" muted>
+			</video>
+			<video class="video-overlay" controls="false">
 			</video>
 			<canvas class="canvas">
 			</canvas>
+			<canvas class="canvas-overlay">
+			</canvas>
+			<audio class="audio">
+			</audio>
 		</div>
 	</main>
 
