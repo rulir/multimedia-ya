@@ -31,10 +31,28 @@
 			</canvas>
 			<canvas class="canvas-overlay">
 			</canvas>
+			<canvas class="canvas-webgl">
+			</canvas>
 			<audio class="audio" loop>
 			</audio>
 		</div>
 	</main>
+
+	<script id="vertex-shader" type="x-shader/x-vertex">
+		void main() {
+			attribute vec3 aVertexPosition;
+			gl_Position = vec4(aVertexPosition, 1.0);
+		}
+	</script>
+
+	<script id="fragment-shader" type="x-shader/x-fragment">
+		precision highp float;
+		const float PI = 3.14159265359;
+		void main() {
+			gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+		}
+
+	</script>
 
 	<script type="text/javascript" src="./js/bundle.js"></script>
 	<script type="text/javascript" src="./assets/lib/subtitles.parser.min.js"></script>

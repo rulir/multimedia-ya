@@ -94,6 +94,7 @@ class Canvas {
 			this.player.play();
 			this.overlayPlayer.play();
 			this.audio.play();
+			this.prepareShaders();
 			this.startTimeСountup(); //начинаем вычислять время до показа субтитров
 			cancelAnimationFrame(this.textReq);
 			this.videoReq = requestAnimationFrame(this.watchTheVideo.bind(this)); //отрисовываем кадр
@@ -131,7 +132,7 @@ class Canvas {
 			this.player.pause();
 			cancelAnimationFrame(this.videoReq);
 			//рисуем субтитры
-			this.textReq = requestAnimationFrame(this.drowText.bind(this));
+			this.textReq = requestAnimationFrame(this.drawText.bind(this));
 			clearTimeout(this.t1);
 
 			/*ждем пока прийдет время продолжить воспроизведение*/
@@ -166,6 +167,83 @@ class Canvas {
 		this.paintOverlayEffect();
 	};
 
+	prepareShaders() {
+		let vertices = [-1.0, -1.0,
+			1.0, -1.0, -1.0, 1.0,
+
+			-1.0, 1.0,
+			1.0, -1.0,
+			1.0, 1.0
+		];
+
+		let webglCanvas = document.querySelector('.canvas-webgl');
+		let gl = webglCanvas.getContext("experimental-webgl");
+
+		let compileShader = function(shaderSource, shaderType) {
+			let shader = gl.createShader(shaderType);
+			gl.shaderSource(shader, shaderSource);
+			gl.compileShader(shader);
+			return shader;
+		};
+
+		let getShader = function(id) {
+			let shaderScript = document.getElementById(id);
+			let shaderSource = "";
+			let textLine = shaderScript.firstChild;
+			while(textLine) {
+				if (textLine.nodeType == 3) {
+					shaderSource += textLine.textContent;
+					textLine = textLine.nextSibling;
+				};
+			};
+
+			let shader;
+
+			if (shaderScript.type == "x-shader/x-fragment") {
+				shader = compileShader(shaderSource, gl.FRAGMENT_SHADER);
+			} else if (shaderScript.type == "x-shader/x-vertex") {
+				shader = compileShader(shaderSource, gl.VERTEX_SHADER);
+			} else {
+				return null;
+			};
+			return shader;
+		};
+
+		let vertexShader = getShader("vertex-shader");
+		let fragmenthader = getShader("fragment-shader");
+
+		console.dir(vertexShader, fragmenthader);
+
+		let shaderProgram = gl.createProgram();
+		gl.attachShader(shaderProgram, vertexShader);
+		gl.attachShader(shaderProgram, fragmenthader);
+		gl.linkProgram(shaderProgram);
+		gl.useProgram(shaderProgram);
+
+		gl.deleteShader(vertexShader);
+		gl.deleteShader(fragmenthader);
+
+		let vertexPositionLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
+		let buffer = gl.createBuffer();
+		gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+		gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+		gl.enableVertexAttribArray(vertexPositionLocation);
+		gl.vertexAttribPointer(vertexPositionLocation, 2, gl.FLOAT, false, 0, 0);
+
+		let draw = function() {
+			gl.drawArrays(gl.TRIANGLES, 0, 6);
+		};
+
+		let render = function() {
+			requestAnimationFrame(render);
+			draw();
+		};
+
+		render();
+	};
+
+
+
 	paintOverlayEffect() {
 		//берем изображениие из плеера для видео с эффектом старины в канвас для отрисвоки эффекта
 		this.overlayCanvasContext.drawImage(this.overlayPlayer.playerEl, 0, 0, this.overlayPlayer.width, this.overlayPlayer.height);
@@ -178,7 +256,7 @@ class Canvas {
 	};
 
 	//функция для отрисовки субтитров
-	drowText(text) {
+	drawText(text) {
 		this.context.fillStyle = 'rgb(50, 50, 50)';
 		//фон
 		this.context.fillRect(0, 0, this.canvasEl.width, this.canvasEl.height);
@@ -190,7 +268,7 @@ class Canvas {
 		//накладываем эффект старины
 		this.paintOverlayEffect();
 		cancelAnimationFrame(this.videoReq);
-		this.textReq = requestAnimationFrame(this.drowText.bind(this));
+		this.textReq = requestAnimationFrame(this.drawText.bind(this));
 	};
 
 	//перенос субтитров по словам
